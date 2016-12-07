@@ -1,7 +1,6 @@
 #ifndef VDI_H
 #define VDI_H
 
-
 #include <stdio.h>
 #include <stdint.h>
 
@@ -54,6 +53,5 @@ typedef struct {
 vdi_result vdi_open(vdi_image**, const char*);
 vdi_result vdi_read_block(vdi_image*, uint32_t, void*);
 vdi_result vdi_close(vdi_image*);
-
 
 #endif /* VDI_H */

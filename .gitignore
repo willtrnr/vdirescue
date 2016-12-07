@@ -1,6 +1,6 @@
-*.vdi
+*.exe
 *.o
 *.out
-*.exe
 *.raw
 *.swp
+*.vdi

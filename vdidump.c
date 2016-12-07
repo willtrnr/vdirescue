@@ -5,6 +5,7 @@
 
 #include "vdi.h"
 
+
 int main(int argc, char** argv) {
     if (argc < 2) {
         printf("Usage: %s <src> [dest]\n", argv[0]);
@@ -33,22 +34,24 @@ int main(int argc, char** argv) {
         }
 
         FILE* fp;
-	if ((fp = fopen(argv[2], "wb")) == NULL) {
+        if ((fp = fopen(argv[2], "wb")) == NULL) {
             fprintf(stderr, "%s\n", "Could not open the dest file for writing");
-	    vdi_close(img);
+            vdi_close(img);
             free(buf);
             return 1;
         }
 
-	for (uint32_t i = 0; i < img->header.blocks_in_hdd; ++i) {
+        uint32_t failed = 0;
+        for (uint32_t i = 0; i < img->header.blocks_in_hdd; ++i) {
             if (i % 100 == 0) {
                 putchar('.');
                 fflush(stdout);
             }
 
             if (vdi_read_block(img, i, buf) != VDI_OK) {
+                ++failed;
                 putchar('!');
-		memset(buf, 0, img->header.block_size);
+                memset(buf, 0, img->header.block_size);
             }
 
             if (fwrite(buf, img->header.block_size, 1, fp) != 1) {
@@ -58,12 +61,13 @@ int main(int argc, char** argv) {
                 fclose(fp);
                 return 1;
             }
-	}
+        }
 
-	free(buf);
+        printf("\n%s\n", "Done!");
+        printf("%s%"PRIu32"%s\n", "Rcovered ", img->header.blocks_in_hdd - failed, " blocks.");
+
+        free(buf);
         fclose(fp);
-
-	printf("\n%s\n", "Done!");
     }
 
     vdi_close(img);

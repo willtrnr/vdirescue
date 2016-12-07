@@ -7,5 +7,5 @@ fi
 CFLAGS="$CFLAGS -std=c99 -O -Wall -Wextra -Wundef"
 
 $CC $CFLAGS \
-  vdi.c \
-  vdidump.c
+    vdi.c \
+    vdidump.c

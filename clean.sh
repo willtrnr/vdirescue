@@ -1,3 +1,6 @@
 #! /bin/sh
 
-rm -f *.exe *.out *.o
+rm -f \
+    *.exe \
+    *.out \
+    *.o
