@@ -17,9 +17,11 @@ int main(int argc, char** argv) {
         return 1;
     }
 
+    uint32_t blocks = img->header.disk_size / img->header.block_size;
+
     printf("Disk Size: %"PRIu64"\n", img->header.disk_size);
     printf("Block Size: %"PRIu32"\n", img->header.block_size);
-    printf("Block Count: %"PRIu32"\n", img->header.blocks_in_hdd);
+    printf("Block Count: %"PRIu32"\n", blocks);
     printf("Blocks Offset: 0x%"PRIX32"\n", img->header.offset_blocks);
     printf("Data Offset: 0x%"PRIX32"\n", img->header.offset_data);
 
@@ -42,7 +44,7 @@ int main(int argc, char** argv) {
         }
 
         uint32_t failed = 0;
-        for (uint32_t i = 0; i < img->header.blocks_in_hdd; ++i) {
+        for (uint32_t i = 0; i < blocks; ++i) {
             if (i % 100 == 0) {
                 putchar('.');
                 fflush(stdout);
@@ -63,8 +65,7 @@ int main(int argc, char** argv) {
             }
         }
 
-        printf("\n%s\n", "Done!");
-        printf("%s%"PRIu32"%s\n", "Rcovered ", img->header.blocks_in_hdd - failed, " blocks.");
+        printf("\n%s%"PRIu32"%s\n", "Done! (", blocks - failed, " blocks recovered)");
 
         free(buf);
         fclose(fp);

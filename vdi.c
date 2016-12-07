@@ -30,11 +30,13 @@ vdi_result _vdi_read_blockmap(vdi_image* img) {
         return VDI_KO;
     }
 
-    if ((img->blockmap = malloc(sizeof(_vdi_blockmap) * img->header.blocks_in_hdd)) == NULL) {
+    uint32_t blocks = img->header.disk_size / img->header.block_size;
+
+    if ((img->blockmap = malloc(sizeof(_vdi_blockmap) * blocks)) == NULL) {
         return VDI_KO;
     }
 
-    if (fread(img->blockmap, sizeof(_vdi_blockmap), img->header.blocks_in_hdd, img->handle) != img->header.blocks_in_hdd) {
+    if (fread(img->blockmap, sizeof(_vdi_blockmap), blocks, img->handle) != blocks) {
         free(img->blockmap);
         img->blockmap = NULL;
         return VDI_KO;
@@ -70,7 +72,9 @@ vdi_result vdi_open(vdi_image** img, const char* filename) {
 }
 
 vdi_result vdi_read_block(vdi_image* img, uint32_t block, void* buf) {
-    if (block >= img->header.blocks_in_hdd) {
+    uint32_t blocks = img->header.disk_size / img->header.block_size;
+
+    if (block >= blocks) {
         return VDI_KO;
     }
 
