@@ -5,20 +5,25 @@
 #include <stdint.h>
 
 
+typedef uint8_t vdi_result;
 #define VDI_OK 0
 #define VDI_KO 1
-typedef uint8_t vdi_result;
 
 
-typedef struct __attribute__((__packed__)) {
-    uint8_t header[64];
+typedef uint8_t vdi_open_flags;
+#define VDI_OPEN_DEFAULT 0x00
+#define VDI_OPEN_UNSAFE  0x01
+
+
+typedef struct __attribute__((__packed__)) _vdi_header {
+    uint8_t info[64];
     uint32_t sig;
     uint16_t version_major;
     uint16_t version_minor;
     uint32_t header_size;
     uint32_t image_type;
     uint32_t image_flags;
-    uint8_t description[256];
+    uint8_t comments[256];
     uint32_t offset_blocks;
     uint32_t offset_data;
     uint32_t cylinders;
@@ -43,14 +48,14 @@ typedef uint32_t _vdi_blockmap;
 typedef _vdi_blockmap* vdi_blockmap;
 
 
-typedef struct {
+typedef struct _vdi_image {
     FILE* handle;
     vdi_header header;
     vdi_blockmap blockmap;
 } vdi_image;
 
 
-vdi_result vdi_open(vdi_image**, const char*);
+vdi_result vdi_open(vdi_image**, const char*, vdi_open_flags);
 vdi_result vdi_read_block(vdi_image*, uint32_t, void*);
 vdi_result vdi_close(vdi_image*);
 

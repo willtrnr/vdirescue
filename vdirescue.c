@@ -12,8 +12,8 @@ int main(int argc, char** argv) {
         return 0;
     }
 
-    vdi_image* img;
-    if (vdi_open(&img, argv[1]) != VDI_OK) {
+    vdi_image* img = NULL;
+    if (vdi_open(&img, argv[1], VDI_OPEN_DEFAULT) != VDI_OK) {
         return 1;
     }
 
@@ -28,14 +28,14 @@ int main(int argc, char** argv) {
     if (argc > 2) {
         printf("\n%s%s%s\n", "Cloning to ", argv[2], "...");
 
-        void* buf;
+        void* buf = NULL;
         if ((buf = malloc(img->header.block_size)) == NULL) {
             fprintf(stderr, "%s\n", "Could not allocate the block memory buffer");
             vdi_close(img);
             return 1;
         }
 
-        FILE* fp;
+        FILE* fp = NULL;
         if ((fp = fopen(argv[2], "wb")) == NULL) {
             fprintf(stderr, "%s\n", "Could not open the dest file for writing");
             vdi_close(img);

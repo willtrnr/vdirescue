@@ -14,14 +14,6 @@ vdi_result _vdi_read_header(vdi_image* img) {
         return VDI_KO;
     }
 
-    if (img->header.sig != 0xBEDA107F) {
-        return VDI_KO;
-    }
-
-    if (img->header.header_size != 0x0190) {
-        return VDI_KO;
-    }
-
     return VDI_OK;
 }
 
@@ -45,7 +37,8 @@ vdi_result _vdi_read_blockmap(vdi_image* img) {
     return VDI_OK;
 }
 
-vdi_result vdi_open(vdi_image** img, const char* filename) {
+vdi_result vdi_open(vdi_image** img, const char* filename, vdi_open_flags flags) {
+    *img = NULL;
     if ((*img = malloc(sizeof(vdi_image))) == NULL) {
         return VDI_KO;
     }
@@ -61,6 +54,18 @@ vdi_result vdi_open(vdi_image** img, const char* filename) {
     if (_vdi_read_header(*img) != VDI_OK) {
         vdi_close(*img);
         return VDI_KO;
+    }
+
+    if ((flags & VDI_OPEN_UNSAFE) == 0) {
+        if ((*img)->header.sig != 0xBEDA107F) {
+            vdi_close(*img);
+            return VDI_KO;
+        }
+
+        if ((*img)->header.header_size != 0x0190) {
+            vdi_close(*img);
+            return VDI_KO;
+        }
     }
 
     if (_vdi_read_blockmap(*img) != VDI_OK) {
